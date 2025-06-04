@@ -1,0 +1,16 @@
+[package]
+name = "sample_contract"
+version = "1.0.0"
+authors = []
+
+[addresses]
+swap = "0x1234567890abcdef"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
