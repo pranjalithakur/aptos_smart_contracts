@@ -4,9 +4,15 @@ module 0x42::example {
     use std::signer::address_of;
     use std::string;
     use aptos_framework::fungible_asset::{Metadata};
+    use aptos_framework::coin;
+    use aptos_framework::aptos_coin::AptosCoin;
 
     // Constants
     const PROTOCOL_FEE_BPS: u64 = 30; // 0.3%
+    
+    // Error codes
+    const E_INSUFFICIENT_BALANCE: u64 = 1;
+    const E_PAYMENT_FAILED: u64 = 2;
  
     struct Subscription has key {
         end_subscription: u64
@@ -16,18 +22,23 @@ module 0x42::example {
         data: vector<u8>
     }
 
-    // Helper functions that were missing
     fun calculate_subscription_price(end_subscription: u64): u64 {
-        // Simple pricing based on duration
         let duration = end_subscription - timestamp::now_seconds();
-        duration * 100 // 100 units per second
+        duration * 100 
     }
 
     fun payment(user: &signer, amount: u64) {
-        // Payment logic would go here
-        // For now, just verify user has sufficient balance
-        let _user_addr = address_of(user);
-        // In real implementation, you'd deduct the amount from user's account
+        let user_addr = address_of(user);
+        let balance = coin::balance<AptosCoin>(user_addr);
+        
+        assert!(balance >= amount, E_INSUFFICIENT_BALANCE);
+        
+        let payment_coin = coin::withdraw<AptosCoin>(user, amount);
+        let protocol_address = @0x1234567890abcdef;
+    
+        coin::deposit(protocol_address, payment_coin);
+        
+
     }
  
     // OOC
